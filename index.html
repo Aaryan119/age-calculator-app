@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  
+  <title>Frontend Mentor | Age calculator app</title>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body{
+      min-height:100vh;
+      line-height: 1.5;
+      display: flex;
+      justify-content:center;
+      align-items: center;
+      background-color: hsl(0, 0%, 94%);
+    }
+    .main{
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color:  white;
+      border-radius: 0 0 10rem 0;
+      gap:2rem;
+    }
+    .inside-container{
+      margin-inline: 6rem;
+      padding-inline: 3rem;
+      width:100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+
+
+    }
+    label{
+      display: flex;
+      flex-direction: column;
+      color:  hsl(0, 1%, 44%);
+    }
+
+    #form{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap:3rem;
+      width:100%;
+
+
+    }
+    input{
+      padding:1rem;
+      border-radius: 0.5rem;
+      font-size: medium;
+      border-color:  hsl(0, 0%, 94%);
+      font-weight: 600;
+    }
+    
+    .line{
+      height:0.1rem;
+      width:100%;
+      background-color: hsl(0, 0%, 86%) ;
+    }
+    #box{
+      height:4.5rem;
+      width:5rem;
+      border-radius:50%;
+      background-color:hsl(259, 100%, 65%) ;
+      border-color:hsl(259, 100%, 65%);
+    }
+    h1{
+      font-size: 5rem;
+
+    }
+
+    span{
+      color: hsl(259, 100%, 65%);
+    }
+    .class{
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width:100%;
+      margin-inline: 6rem;
+      padding-inline: 3rem;
+    }
+    .input{
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap:3rem;
+
+    }
+    .next{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #box:hover{
+      background-color: black;
+      border-color: black;
+    }
+
+
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+  <main class="main">
+    <div class="inside-container">
+
+      <form action="" id="form">
+      <div class="input">
+        <label for="date">Day
+          <input type="number" min="1" max="31" placeholder="DD" id="date" name="date">
+          <p class="invalid-date"></p>
+        </label>
+        <label for="month">Month
+          <input type="number" min="1" max="12" placeholder="MM" id="month" name="month">
+          <p class="invalid-Month"></p>
+        </label>
+        <label for="year">Year
+          <input type="number" min="1957" max="2023" placeholder="YYYY" id="year" name="year">
+          <p class="invalid-Year"></p>
+        </label>
+      </div>
+      <div class="next">
+        <div class="line"></div>
+        <button id="box"><img src="./assets/images/icon-arrow.svg" alt=""></button>
+      </div>
+      </form>
+    </div>
+    <div class="class">
+      <h1><span id="value-year">--</span> years</h1>
+      <h1><span id="value-month">--</span> months</h1>
+      <h1><span id="value-date">--</span> days</h1>
+
+    </div>
+  </main>
+</body>
+<script>
+  const button = document.querySelector('#box');
+  const input = document.querySelector('#form');
+  let dateglobal = document.getElementById('date');
+  let monthglobal = document.getElementById('month');
+  let yearglobal = document.getElementById('year');
+  const invalidDate = document.querySelector('.invalid-date');
+  const invalidMonth = document.querySelector('.invalid-Month');
+  const invalidYear = document.querySelector('.invalid-Year');
+  const dateValue=document.getElementById('value-date');
+  const MonthValue=document.getElementById('value-month');
+  const YearValue=document.getElementById('value-year');
+  let red='2px solid red';
+
+
+
+  input.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const date = parseInt(document.querySelector('#date').value);
+    const month = parseInt(document.querySelector('#month').value);
+    const year = parseInt(document.querySelector('#year').value);
+
+
+    if(validateDate() && validateMonth() && validateYear()){
+      console.log('Done');
+    }
+    else{
+      return;
+    }
+    let newDate=new Date().getDate()-date;
+    let newMonth=(new Date().getMonth()+1)-month;
+    let newYear=new Date().getFullYear()-year;
+
+
+
+    if(newMonth<0){
+      newYear=newYear-1;
+      newMonth=newMonth+12;
+    }
+
+    if(newDate<0){
+      newMonth-=1;
+      newDate=((getNoofDays(year,(new Date().getMonth()+1)-1))+(new Date().getDate()))-date;
+    }
+    dateValue.innerText=newDate;
+    MonthValue.innerText=newMonth;
+    YearValue.innerText=newYear;
+  });
+  function getNoofDays(year,month){
+    return new Date(year,month,0).getDate();
+  }
+
+
+  dateglobal.addEventListener('blur',()=>{
+    validateDate();
+  });
+
+  const validateDate=()=>{
+    const D=dateglobal.value;
+    const M=monthglobal.value;
+    const Y=yearglobal.value;
+    if(D==''){
+      showMessage(dateglobal,'This Field Is Required',red);
+      return false;
+    }
+    else if(!validDay(Y,M,D)){
+      showMessage(dateglobal,'Must be a valid day',red);
+      return false;
+    }
+    else{
+      showMessage(dateglobal,'','');
+      return true;
+    }
+  };
+
+
+
+  monthglobal.addEventListener('blur',()=>{
+    validateMonth();
+  });
+
+  const validateMonth=()=>{
+    const D=dateglobal.value;
+    const M=monthglobal.value;
+    const Y=yearglobal.value;
+    if(M==''){
+      showMessage(monthglobal,'This Field Is Required',red);
+      return false;
+    }
+    else if(!validMonth(M)){
+      showMessage(monthglobal,'Must be a valid Month',red);
+      return false;
+    }
+    else{
+      showMessage(monthglobal,'','');
+      return true;
+    }
+  };
+
+
+
+  yearglobal.addEventListener('blur',()=>{
+    validateYear();
+  });
+
+  const validateYear=()=>{
+    const D=parseInt(dateglobal.value);
+    const M=parseInt(monthglobal.value);
+    const Y=parseInt(yearglobal.value);
+    if(Y==''){
+      showMessage(yearglobal,'This Field Is Required',red);
+      return false;
+    }
+    else if(!validYear(Y,M,D)){
+      showMessage(yearglobal,'Must be a valid Year',red);
+      return false;
+    }
+    else{
+      showMessage(yearglobal,'','');
+      return true;
+    }
+  };
+
+
+  function validDay(y,m,d){
+
+    if(d>getNoofDays(y,m) || d<1){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+  function validMonth(m){
+    if(m>12 || m<1)return false;
+    return true;
+  }
+
+  function validYear(y,m,d){
+    const secondDate = new Date();
+    const firstDate = new Date(`${y}-${m}-${d}`);
+    if (firstDate.setHours(0, 0, 0, 0) <= secondDate.setHours(0, 0, 0, 0)) {
+      return true;
+    }
+    return false;
+  }
+
+
+  function showMessage(elem,message,border){
+    elem.style.border=border;
+    elem.nextElementSibling.innerText = message;
+    // elem.nextElementSibling.style.color="red";
+    // elem.parentElement.style.color="red";
+
+
+
+
+  }
+
+
+
+
+
+</script>
+</html>
